@@ -1,18 +1,42 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import './App.scss';
+import CardList from './CardList';
+import ShoppingCart from './ShoppingCart';
 
 class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      photos: [],
+      cartList: []
+    }
+    this.addThisCard = this.addThisCard.bind(this);
+  }
+
+  componentDidMount() {
+    fetch('https://jsonplaceholder.typicode.com/photos')
+    .then(res => res.json())
+    .then((res) => {
+      this.setState({
+        photos: res.slice(0, 21).map((c) => {c.visible=true; return c})
+      })
+    })
+  }
+
+  addThisCard(card) {
+    card.visible = false;
+    this.setState({
+      cartList: [...this.state.cartList, card]
+    })
+  }
+
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+          <input type="text" />
+          <ShoppingCart cartList={this.state.cartList}></ShoppingCart>
+          <CardList addThisCard= {this.addThisCard} list = {this.state.photos}/>
       </div>
     );
   }
